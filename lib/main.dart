@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movie/pages/profile.dart';
 import 'package:movie/pages/search.dart';
+import 'package:movie/scoped_models/state.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,13 +10,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.cyan,
+    return ScopedModel<StateModel>(
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          primaryColor: Colors.amber,
+          toggleableActiveColor: Colors.white,
+        ),
+        home: MyHomePage(title: 'Movie app'),
       ),
-      home: MyHomePage(title: 'Movie app'),
+      model: StateModel(),
     );
   }
 }
@@ -30,14 +36,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _index = 0;
   final List<Map<String, dynamic>> _children = [
-    {
-      'title': 'Search',
-      'component': Search()
-    },
-    {
-      'title': 'Profile',
-      'component': Profile()
-    }
+    {'title': 'Search', 'component': Search()},
+    {'title': 'Profile', 'component': Profile()}
   ];
 
   void handleBottomNavigation(int index) {
@@ -58,15 +58,23 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _index,
         type: BottomNavigationBarType.fixed,
+        selectedItemColor: Theme.of(context).primaryColor,
+        selectedFontSize: 15.0,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            title: Text('Search')
-          ),
+              icon: Icon(
+                Icons.search,
+              ),
+              title: Text(
+                'Search',
+              )),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            title: Text('Favorites')
-          )
+              icon: Icon(
+                Icons.favorite,
+              ),
+              title: Text(
+                'Favorites',
+              ))
         ],
         onTap: (index) {
           handleBottomNavigation(index);

@@ -4,28 +4,47 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie/models/movie.dart';
+import 'package:movie/pages/movie/likeButton.dart';
 
+import 'info.dart';
 
-class Result extends StatelessWidget {
+class Result extends StatefulWidget {
   final String query;
-  final String _apiKey = "apikey=4989e4c";
-  final String url = "http://www.omdbapi.com/";
-
   Result({this.query});
 
+  @override
+  State<StatefulWidget> createState() {
+    return _Result();
+  }
+}
+
+class _Result extends State<Result> {
+  final String _apiKey = "apikey=4989e4c";
+  final String url = "http://www.omdbapi.com/";
+  bool isLiked;
+  
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      isLiked = true;
+    });
+  }
+
+
   Future<http.Response> fetchFilm() {
-    final endpoint = "${this.url}?${this._apiKey}&t=${this.query}";
+    final endpoint = "${this.url}?${this._apiKey}&t=${widget.query}";
     var response = http.get(endpoint);
     return response;
   }
 
   @override
   Widget build(BuildContext context) {
-    print("render");
+    print("hello");
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Center(
-        child: FutureBuilder(
+        child: widget.query.isNotEmpty ? FutureBuilder(
           future: fetchFilm(),
           builder: (context, snapshot) {
             switch(snapshot.connectionState) {
@@ -39,17 +58,17 @@ class Result extends StatelessWidget {
                       padding: EdgeInsets.all(15.0),
                       child: ListView(
                         children: <Widget>[
-                          Image.network(movie.poster),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.0),
-                            child: Text("${movie.title} (${movie.year})", style: TextStyle(fontSize: 20),),
+                          GestureDetector(
+                            child: Image.network(movie.poster),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.0),
-                            child: Text("Imdb Rating: ${movie.imdbRating}", style: TextStyle(fontSize: 14),),
+                          LikeButton(
+                            imdbID: movie.imdbID,
                           ),
-                          Padding(padding: EdgeInsets.only(top: 10.0),
-                            child: Text("${movie.plot}"),
+                          Info(
+                            title: movie.title,
+                            year: movie.year,
+                            imdbRating: movie.imdbRating,
+                            plot: movie.plot,
                           ),
                         ],
                       )
@@ -61,7 +80,7 @@ class Result extends StatelessWidget {
                 return Text('Error');
             }
           }
-        ),
+        ) : Text('No movie'),
       ),
     );
   }
