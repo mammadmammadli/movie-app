@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie/pages/profile.dart';
+import 'package:movie/pages/favourites/index.dart';
 import 'package:movie/pages/search.dart';
 import 'package:movie/scoped_models/state.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _index = 0;
   final List<Map<String, dynamic>> _children = [
     {'title': 'Search', 'component': Search()},
-    {'title': 'Profile', 'component': Profile()}
+    {'title': 'Favourite', 'component': Favorite()}
   ];
 
   void handleBottomNavigation(int index) {

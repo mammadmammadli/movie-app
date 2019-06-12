@@ -1,26 +1,40 @@
+import 'package:movie/models/movie.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 mixin MovieModel on Model{
 
-  List<String> _movies = [];
+  List<Movie> _movies = [];
+
+  Movie searchedMovie;
   
-  List<String> get movies {
+  List<Movie> get movies {
     return List.from(_movies);
   }
 
-  void addMovie(String imdbID) {
-    _movies.add(imdbID);
+  void addMovie(Movie movie) {
+    _movies.add(movie);
     notifyListeners();
   }
 
   void deleteMovie(String imdbID) {
-    _movies.removeWhere((test) => test == imdbID);
+    _movies.removeWhere((movie) => movie.imdbID == imdbID);
     notifyListeners();
   }
 
-  bool isMovieLiked (String imdbID) {
-    print(this.movies);
-    if (this._movies.contains(imdbID)) return true;
+  void undoMovie (int index, Movie movie) {
+    _movies.insert(index, movie);
+    notifyListeners();
+  }
+
+  bool isMovieLiked (Movie __movie) {
+    if(this._movies.indexWhere((movie) => movie.imdbID == __movie.imdbID) != -1) {
+      return true;
+    }
     return false;
+  }
+
+  void addSearchedMovie (Movie _movie) {
+    this.searchedMovie = _movie;
+    notifyListeners();
   }
 }

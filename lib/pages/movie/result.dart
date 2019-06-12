@@ -40,7 +40,6 @@ class _Result extends State<Result> {
 
   @override
   Widget build(BuildContext context) {
-    print("hello");
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Center(
@@ -62,7 +61,7 @@ class _Result extends State<Result> {
                             child: Image.network(movie.poster),
                           ),
                           LikeButton(
-                            imdbID: movie.imdbID,
+                            movie: movie,
                           ),
                           Info(
                             title: movie.title,

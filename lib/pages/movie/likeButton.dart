@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:movie/models/movie.dart';
 import 'package:movie/scoped_models/state.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class LikeButton extends StatefulWidget {
-  final String imdbID;
-  LikeButton({this.imdbID});
+  final Movie movie;
+  LikeButton({this.movie});
 
   @override
   State<StatefulWidget> createState() {
@@ -13,20 +14,12 @@ class LikeButton extends StatefulWidget {
 }
 
 class _LikeButton extends State<LikeButton> {
-  bool isLiked;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      isLiked = true;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(
       builder: (BuildContext context, Widget child, StateModel model) {
+        final isLiked = model.isMovieLiked(widget.movie);
         return Padding(
           padding: EdgeInsets.only(top: 10.0),
           child: RaisedButton.icon(
@@ -36,7 +29,7 @@ class _LikeButton extends State<LikeButton> {
                 ? Icon(Icons.favorite)
                 : Icon(Icons.favorite_border),
             onPressed: () {
-              _toggleLike(model);
+              _toggleLike(model, isLiked);
             },
           ),
         );
@@ -44,14 +37,11 @@ class _LikeButton extends State<LikeButton> {
     );
   }
 
-  void _toggleLike(StateModel model) {
-    if (this.isLiked) {
-      model.addMovie(widget.imdbID);
+  void _toggleLike(StateModel model, bool isLiked) {
+    if (!isLiked) {
+      model.addMovie(widget.movie);
     } else {
-      model.deleteMovie(widget.imdbID);
+      model.deleteMovie(widget.movie.imdbID);
     }
-    setState(() {
-      isLiked = !this.isLiked;
-    });
   }
 }
