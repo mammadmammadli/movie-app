@@ -17,7 +17,7 @@ mixin MovieModel on Model{
   }
 
   void deleteMovie(String imdbID) {
-    _movies.removeWhere((movie) => movie.imdbID == imdbID);
+    _movies.removeWhere((movie) => movie.id.toString() == imdbID);
     notifyListeners();
   }
 
@@ -27,7 +27,7 @@ mixin MovieModel on Model{
   }
 
   bool isMovieLiked (Movie __movie) {
-    if(this._movies.indexWhere((movie) => movie.imdbID == __movie.imdbID) != -1) {
+    if(this._movies.indexWhere((movie) => movie.id == __movie.id) != -1) {
       return true;
     }
     return false;

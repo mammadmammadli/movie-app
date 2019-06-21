@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:movie/blocs/favoriteBloc.dart';
 import 'package:movie/models/movie.dart';
 import 'package:movie/pages/movie/likeButton.dart';
 
@@ -22,6 +23,7 @@ class _Result extends State<Result> {
   final String _apiKey = "apikey=4989e4c";
   final String url = "http://www.omdbapi.com/";
   bool isLiked;
+  final _bloc = FavoriteBloc();
   
   @override
   void initState() {
@@ -29,6 +31,10 @@ class _Result extends State<Result> {
     setState(() {
       isLiked = true;
     });
+  }
+
+  void addFav() {
+
   }
 
 
@@ -65,9 +71,7 @@ class _Result extends State<Result> {
                           ),
                           Info(
                             title: movie.title,
-                            year: movie.year,
-                            imdbRating: movie.imdbRating,
-                            plot: movie.plot,
+                            imdbRating: movie.vote_average.toString(),
                           ),
                         ],
                       )
@@ -79,8 +83,28 @@ class _Result extends State<Result> {
                 return Text('Error');
             }
           }
-        ) : Text('No movie'),
+        ) : Container(
+          child: StreamBuilder(
+            stream: _bloc.counter,
+            initialData: 0,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              int counter = snapshot.data;
+              return RaisedButton(
+                  onPressed: () {
+                    _bloc.inCounter.add(++counter);
+                  },
+                  child: Text('Clicked ${snapshot.data}'),
+              );
+            },
+          ),
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bloc.dispose();
   }
 }

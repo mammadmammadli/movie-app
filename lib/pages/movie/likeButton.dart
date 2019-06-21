@@ -41,7 +41,7 @@ class _LikeButton extends State<LikeButton> {
     if (!isLiked) {
       model.addMovie(widget.movie);
     } else {
-      model.deleteMovie(widget.movie.imdbID);
+      model.deleteMovie(widget.movie.id.toString());
     }
   }
 }

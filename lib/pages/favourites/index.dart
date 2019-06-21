@@ -11,7 +11,7 @@ class Favorite extends StatelessWidget {
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return Dismissible(
-            key: Key(movies[index].imdbID),
+            key: Key(movies[index].id.toString()),
             direction: DismissDirection.endToStart,
             background: Container(
               alignment: Alignment.centerRight,
@@ -23,7 +23,7 @@ class Favorite extends StatelessWidget {
               ),
             ),
             onDismissed: (direct) {
-              model.deleteMovie(movies[index].imdbID);
+              model.deleteMovie(movies[index].id.toString());
               Scaffold.of(context).showSnackBar(SnackBar(
                   content: Text("${movies[index].title} is removed."),
                   action: SnackBarAction(
@@ -37,7 +37,6 @@ class Favorite extends StatelessWidget {
                 backgroundImage: NetworkImage(movies[index].poster),
               ),
               title: Text(movies[index].title),
-              subtitle: Text(movies[index].year),
             ),
           );
         },

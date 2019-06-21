@@ -37,13 +37,13 @@ class _Home extends State<Home> {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          brightness: Brightness.dark,
-          primaryColor: Colors.amber,
+          brightness: Brightness.light,
+          primaryColor: Colors.white,
           toggleableActiveColor: Colors.white,
         ),
         home: Scaffold(
           body: Center(
-            child: this._isAuthenticated ? Index () : AuthIndex(),
+            child: Index (),
           ),
         ),
       ),
