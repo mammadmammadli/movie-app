@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:movie/models/movie.dart';
-import 'package:movie/models/paginate.dart';
+import 'package:movie/models/baseResponse.dart';
 import 'package:movie/services/movies.dart';
 
 class Trending extends StatefulWidget {
@@ -36,7 +36,7 @@ class _Trending extends State<Trending> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<Pagination>(
+      body: FutureBuilder<BaseResponse<Movie>>(
           future: _movieService.getTrendings(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.hasData) {
