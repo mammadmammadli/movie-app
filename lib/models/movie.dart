@@ -10,7 +10,7 @@ class Movie {
 
   final String overview;
   final String poster;
-  final double vote_average;
+  final dynamic vote_average;
   final int vote_count;
   final String title;
   final double popularity;

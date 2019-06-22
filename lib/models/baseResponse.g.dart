@@ -12,13 +12,13 @@ BaseResponse<T> _$BaseResponseFromJson<T>(Map<String, dynamic> json) {
 
 abstract class _$BaseResponseSerializerMixin<T> {
   int page;
-  int total_page;
-  int total_results;
+  int totalPage;
+  int totalResults;
   List<T> get results;
   Map<String, dynamic> toJson() => <String, dynamic>{
         'page': page,
-        'total_page': total_page,
-        'total_results': total_results,
+        'total_page': totalPage,
+        'total_results': totalResults,
         'results': results == null ? null : _dataToJson(results)
       };
 }

@@ -5,12 +5,12 @@ part 'baseResponse.g.dart';
 @JsonSerializable()
 class BaseResponse<T> extends Object with _$BaseResponseSerializerMixin {
   int page;
-  int total_page;
-  int total_results;
+  int totalPage;
+  int totalResults;
   @JsonKey(fromJson: _dataFromJson, toJson: _dataToJson)
   List<T> results;
 
-  BaseResponse(this.page, this.total_page, this.total_results, this.results);
+  BaseResponse(this.page, this.totalPage, this.totalResults, this.results);
 
 
   factory BaseResponse.fromJson(Map<String, dynamic> json) => _$BaseResponseFromJson(json);

@@ -35,9 +35,9 @@ class _Index extends State<Index> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Movies', style: TextStyle(fontWeight: FontWeight.w400),),
-        ),
+        // appBar: AppBar(
+        //   title: Text('Movies', style: TextStyle(fontWeight: FontWeight.w400),),
+        // ),
         body: _children[_index]['component'],
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _index,

@@ -4,10 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie/blocs/favoriteBloc.dart';
+import 'package:movie/models/baseResponse.dart';
 import 'package:movie/models/movie.dart';
-import 'package:movie/pages/movie/likeButton.dart';
+import 'package:movie/pages/movie/index.dart';
+import 'package:movie/scoped_models/state.dart';
+import 'package:movie/services/movies.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-import 'info.dart';
 
 class Result extends StatefulWidget {
   final String query;
@@ -20,10 +23,10 @@ class Result extends StatefulWidget {
 }
 
 class _Result extends State<Result> {
-  final String _apiKey = "apikey=4989e4c";
-  final String url = "http://www.omdbapi.com/";
   bool isLiked;
   final _bloc = FavoriteBloc();
+  MovieService _movieService = MovieService();
+
   
   @override
   void initState() {
@@ -33,72 +36,51 @@ class _Result extends State<Result> {
     });
   }
 
-  void addFav() {
-
+  Widget movieListBuilder (List<Movie> movies) {
+    return ListView.builder(
+      itemCount: movies.length,
+      itemBuilder: (BuildContext context, int index) {
+        final movie = movies[index];
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => SingleMovie(movie)));
+          },
+          child: Card(
+            child: ListTile(
+            leading: CircleAvatar(
+                backgroundImage: movie.poster != null ? NetworkImage('http://image.tmdb.org/t/p/w185//${movie.poster}') : null,
+              ),
+              title: Text(movie.title),
+              trailing: Icon(Icons.keyboard_arrow_right),
+            ),
+          ),
+        );
+      },
+    );
   }
 
-
-  Future<http.Response> fetchFilm() {
-    final endpoint = "${this.url}?${this._apiKey}&t=${widget.query}";
-    var response = http.get(endpoint);
-    return response;
+  Widget handleResultBody(StateModel model) {
+    List<Movie> searchedMovies = model.searchedMovies;
+    if (model.isMovieLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return searchedMovies.length > 0 
+    ? movieListBuilder(searchedMovies)
+    : null;
+    
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: Center(
-        child: widget.query.isNotEmpty ? FutureBuilder(
-          future: fetchFilm(),
-          builder: (context, snapshot) {
-            switch(snapshot.connectionState) {
-              case ConnectionState.waiting: 
-                return CircularProgressIndicator();
-              case ConnectionState.done:
-                if (snapshot.hasData && json.decode(snapshot.data.body)['imdbID'] != null) {
-                  Movie movie = Movie.fromJson(json.decode(snapshot.data.body));
-                  return Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(15.0),
-                      child: ListView(
-                        children: <Widget>[
-                          GestureDetector(
-                            child: Image.network(movie.poster),
-                          ),
-                          LikeButton(
-                            movie: movie,
-                          ),
-                          Info(
-                            title: movie.title,
-                            imdbRating: movie.vote_average.toString(),
-                          ),
-                        ],
-                      )
-                    ),
-                  );
-                }
-                return Text('No movie');
-              default:
-                return Text('Error');
-            }
-          }
-        ) : Container(
-          child: StreamBuilder(
-            stream: _bloc.counter,
-            initialData: 0,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              int counter = snapshot.data;
-              return RaisedButton(
-                  onPressed: () {
-                    _bloc.inCounter.add(++counter);
-                  },
-                  child: Text('Clicked ${snapshot.data}'),
-              );
-            },
-          ),
-        ),
-      ),
+    return ScopedModelDescendant(
+      builder: (BuildContext context, Widget child, StateModel model) {
+        return Scaffold(
+          resizeToAvoidBottomPadding: false,
+          body: handleResultBody(model)
+        ); 
+      }
     );
   }
 
@@ -108,3 +90,19 @@ class _Result extends State<Result> {
     _bloc.dispose();
   }
 }
+
+// Container(
+//               child: StreamBuilder(
+//                 stream: _bloc.counter,
+//                 initialData: 0,
+//                 builder: (BuildContext context, AsyncSnapshot snapshot) {
+//                   int counter = snapshot.data;
+//                   return RaisedButton(
+//                       onPressed: () {
+//                         _bloc.inCounter.add(++counter);
+//                       },
+//                       child: Text('Clicked ${snapshot.data}'),
+//                   );
+//                 },
+//               ),
+//             ) : movieListBuilder(model.searchedMovies),

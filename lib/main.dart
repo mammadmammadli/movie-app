@@ -43,7 +43,7 @@ class _Home extends State<Home> {
         ),
         home: Scaffold(
           body: Center(
-            child: Index (),
+            child: Index(),
           ),
         ),
       ),

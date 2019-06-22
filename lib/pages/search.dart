@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:movie/pages/movie/result.dart';
+import 'package:movie/scoped_models/state.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class Search extends StatefulWidget {
   @override
@@ -10,47 +12,58 @@ class Search extends StatefulWidget {
 }
 
 class _Search extends State<Search> {
-  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  final Map<String, String> formValues = {'search': ''};
+  TextEditingController _textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final String searchQuery = formValues['search'];
-    return Scaffold(
-        body: Center(
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(1),
-            child: Form(
-                key: _formKey,
-                child: Theme(
-                  data: ThemeData(primaryColor: Colors.amber),
-                  child: TextFormField(
-                    style: TextStyle(color: Theme.of(context).primaryColor),
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (String value) {
-                        setState(() {
-                          formValues['search'] = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context).primaryColor)),
-                          hintText: 'Search',
-                          hintStyle:
-                              TextStyle(color: Theme.of(context).primaryColor),
-                          fillColor: Theme.of(context).accentColor)),
-                )),
-          ),
-          Expanded(
-            child: Result(
-              query: searchQuery,
+    return ScopedModelDescendant(
+      builder: (BuildContext context, Widget child, StateModel model) {
+        _textEditingController.text = model.searchQuery;
+        return Scaffold(
+            appBar: AppBar(
+              title: Text('Search'),
             ),
-          )
-        ],
-      ),
-    ));
+            body: Center(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child: Theme(
+                          data: ThemeData(primaryColor: Colors.cyan[50]),
+                          child: TextFormField(
+                            controller: _textEditingController,
+                              style: TextStyle(color: Colors.black),
+                              textInputAction: TextInputAction.done,
+                              onFieldSubmitted: (String value) {
+                                // _textEditingController.value = TextEditingValue(text: value);
+                                model.searchMovie(value);
+                              },
+                              decoration: InputDecoration(
+                                  suffixIcon: IconButton(
+                                    icon: Icon(Icons.clear, color: Colors.black,),
+                                    onPressed: () {
+                                      _textEditingController.clear();
+                                      model.clear();
+                                    },
+                                  ),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color:
+                                              Theme.of(context).primaryColor)),
+                                  hintText: 'Search',
+                                  hintStyle: TextStyle(
+                                      color: Theme.of(context).accentColor),
+                                  fillColor: Theme.of(context).accentColor)),
+                        )
+                  ),
+                  Expanded(
+                      child: Result(
+                              query: model.searchQuery,
+                            )
+                    )
+                ],
+              ),
+            ));
+      },
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:movie/models/movie.dart';
 import 'package:movie/models/baseResponse.dart';
+import 'package:movie/pages/movie/index.dart';
 import 'package:movie/services/movies.dart';
 
 class Trending extends StatefulWidget {
@@ -49,12 +50,14 @@ class _Trending extends State<Trending> {
                     return _buildTagPage();
                   } else if (movies.length >= index) {
                     bool active = index == currentPage;
-                    return _buildStoryPage(movies[index - 1], active);
+                    return _buildStoryPage(movies[index - 1], active, context);
                   }
                 },
               );
             }
-            return CircularProgressIndicator();
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }),
     );
   }
@@ -76,37 +79,34 @@ _buildTagPage() {
   );
 }
 
-_buildStoryPage(Movie data, bool active) {
+_buildStoryPage(Movie data, bool active, BuildContext context) {
   final double blur = active ? 30 : 0;
   final double offset = active ? 20 : 0;
   final double top = active ? 50 : 200;
 
-  return AnimatedContainer(
-    duration: Duration(milliseconds: 500),
-    curve: Curves.easeOutExpo,
-    margin: EdgeInsets.only(top: top, bottom: 50, left: 10, right: 10),
-    // child: data.title != null
-    //     ? Center(
-    //         child: Text(
-    //           data.title,
-    //           style: TextStyle(
-    //               fontSize: 40,
-    //               color: Colors.white,
-    //               decoration: TextDecoration.underline),
-    //         ),
-    //       )
-    //     : null,
-    decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-            fit: BoxFit.cover,
-            image:
-                NetworkImage('http://image.tmdb.org/t/p/w185//${data.poster}')),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black87,
-              blurRadius: blur,
-              offset: Offset(offset, offset))
-        ]),
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context, 
+        MaterialPageRoute(builder: (context) => SingleMovie(data))
+      );
+    },
+    child: AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeOutExpo,
+      margin: EdgeInsets.only(top: top, bottom: 50, left: 10, right: 10),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(
+                  'http://image.tmdb.org/t/p/w185//${data.poster}')),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black87,
+                blurRadius: blur,
+                offset: Offset(offset, offset))
+          ]),
+    ),
   );
 }

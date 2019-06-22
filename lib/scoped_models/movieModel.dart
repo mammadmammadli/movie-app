@@ -1,15 +1,32 @@
+import 'package:movie/models/baseResponse.dart';
 import 'package:movie/models/movie.dart';
+import 'package:movie/services/movies.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 mixin MovieModel on Model{
-
+  MovieService _movieService = MovieService();
+  bool _isMovieLoading = false;
   List<Movie> _movies = [];
 
-  Movie searchedMovie;
-  
+  List<Movie> _searchedMovies = [];
+
+  String _query = '';
+
+  bool get isMovieLoading {
+    return _isMovieLoading;
+  }
+
   List<Movie> get movies {
     return List.from(_movies);
   }
+
+  List<Movie> get searchedMovies {
+    return List.from(_searchedMovies);
+  }
+
+  String get searchQuery {
+    return _query;
+  } 
 
   void addMovie(Movie movie) {
     _movies.add(movie);
@@ -33,8 +50,21 @@ mixin MovieModel on Model{
     return false;
   }
 
-  void addSearchedMovie (Movie _movie) {
-    this.searchedMovie = _movie;
+  Future<List<Movie>> searchMovie (String query) async {
+    _isMovieLoading = true;
+    _query = query;
+    notifyListeners();
+    final BaseResponse<Movie> resp = await _movieService.search(query);
+    _searchedMovies = resp.results;
+    _isMovieLoading = false;
+    notifyListeners();
+    return resp.results;
+  }
+
+  void clear () {
+    _query = '';
+    _searchedMovies.clear();
     notifyListeners();
   }
+
 }
